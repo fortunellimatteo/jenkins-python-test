@@ -4,6 +4,9 @@ pipeline{
             label 'docker-agent-pythonOLD'//jenkins-agent-goes-here
         }
     }
+    trigger {
+        pollSCM 'H/5 * * * *'
+    }
     stages{
         stage('Build'){
             steps{
