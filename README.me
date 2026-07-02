@@ -1,0 +1,52 @@
+
+------------------------------------------------------------------ INSTALLAZIONE ------------------------------------------------------------------
+
+PULL IMMAGINE
+docker pull jenkins/jenkins oppure meglio docker pull jenkins/jenkins:lts-jdk21
+
+CREAZIONE RETE
+docker network create jenkins
+
+CREAZIONE CONTAINER (non so se va fatta)
+docker run --name jenkins-docker --rm --detach --privileged --network jenkins --network-alias docker --env DOCKER_TLS_CERTDIR=/certs --volume jenkins-docker-certs:/certs/client --volume jenkins-data:/var/jenkins_home --publish 2376:2376 docker:dind
+
+PARTENZA DI JENKINS
+docker run --name jenkins-blueocean --restart=on-failure --detach --network jenkins --env DOCKER_HOST=tcp://docker:2376 --env DOCKER_CERT_PATH=/certs/client --env DOCKER_TLS_VERIFY=1 --publish 8080:8080 --publish 50000:50000 --volume jenkins-data:/var/jenkins_home --volume jenkins-docker-certs:/certs/client:ro jenkins/jenkins:lts-jdk21
+
+oppure 
+
+docker run --name jenkins-blueocean --restart unless-stopped --detach --network jenkins --env DOCKER_HOST=tcp://docker:2376 --env DOCKER_CERT_PATH=/certs/client --env DOCKER_TLS_VERIFY=1 --publish 8080:8080 --publish 50000:50000 --volume jenkins-data:/var/jenkins_home --volume jenkins-docker-certs:/certs/client:ro jenkins/jenkins:lts-jdk21
+
+RECUPERO PASSWORD ADMINISTRATOR
+	ENTRA NEL CONTAINER
+	docker exec jenkins-blueocean cat /var/jenkins_home/secrets/initialAdminPassword
+	
+	VAI NEI LOG
+	docker logs jenkins-blueocean
+	
+	COPIA LA PASSWORD QUI:
+	Please use the following password to proceed to installation:
+
+	xxxxxxxxxxxxxxxxxxxxxxxx
+	
+	LA PASSWORD MIA è:
+	4c8e38d96d5a4ec58fbb94112d18781c
+	
+	
+	username: matteo
+	password: Caraibi-1997
+	
+	
+	
+	
+	https://www.youtube.com/watch?v=6YZvp2GwT0A&t=7s
+	riprendi dai 43 minuti
+	
+	
+	
+	
+	ALPINE
+	docker run -d --restart=always -p 127.0.0.1:2376:2375 --network jenkins -v /var/run/docker.sock:/var/run/docker.sock alpine/socat tcp-listen:2375,fork,reuseaddr unix-connect:/var/run/docker.sock
+	docker inspect pensive_beaver | grep IPAddress
+	docker inspect pensive_beaver
+	prendi "IPAddress": "172.18.0.3"
